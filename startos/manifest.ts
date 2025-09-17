@@ -1,5 +1,6 @@
 import { setupManifest } from '@start9labs/start-sdk'
-import { SDKImageInputSpec } from '@start9labs/start-sdk/base/lib/types/ManifestTypes'
+import { SDKImageInputSpec } from
+  '@start9labs/start-sdk/base/lib/types/ManifestTypes'
 
 const BUILD = process.env.BUILD || ''
 
