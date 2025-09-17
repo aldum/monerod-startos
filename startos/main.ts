@@ -1,39 +1,22 @@
 import { sdk } from './sdk'
-import { T } from '@start9labs/start-sdk'
-import { datadir, p2pPort, rrpcPort } from './utils'
+import { checkSyncProgress, datadir, p2pPort, rpcPort, rrpcPort } from './utils'
 import { chown, mkdir } from 'fs/promises'
+import { getSubC } from './subcontainers/monero'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   console.info('+++++++++++++++++++ Starting Monero! +++++++++++++++++++')
 
-  const monMounts = sdk.Mounts.of()
-    .mountVolume({
-      volumeId: 'main',
-      subpath: 'bitmonero',
-      mountpoint: datadir,
-      readonly: false,
-    })
-  //   .mountAssets({
-  //   mountpoint: '/entrypoint.sh',
-  //   subpath: '/entrypoint.sh',
-  //   type: 'file'
-  // })
-  const monc = await sdk.SubContainer.of(
-    effects,
-    { imageId: 'monero' },
-    monMounts,
-    'monero-sub',
-  )
+  const monC = await getSubC(effects)
 
   const mainPath = '/media/startos/volumes/main/'
   mkdir(`${mainPath}/bitmonero/lmdb`, { recursive: true })
   chown(`${mainPath}/bitmonero`, 1000, 1000)
   chown(`${mainPath}/bitmonero/lmdb`, 1000, 1000)
 
-    subcontainer: monc,
   const home = '/home/monero'
   return sdk.Daemons.of(effects, started)
     .addDaemon('primary', {
+      subcontainer: monC,
       exec: {
         command: [
           '/entrypoint.sh',
@@ -64,5 +47,17 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           }),
       },
       requires: [],
+    })
+    .addHealthCheck('sync-progress', {
+      ready: {
+        display: 'Blockchain Sync Progress',
+        fn: async () => {
+          const r = await checkSyncProgress(monC)
+          return r
+        },
+        gracePeriod: 10000,
+
+      },
+      requires: ['primary'],
     })
 })
