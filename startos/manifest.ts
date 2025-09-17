@@ -3,12 +3,13 @@ import { setupManifest } from '@start9labs/start-sdk'
 export const manifest = setupManifest({
   id: 'monero',
   title: 'Monero',
-  license: 'mit',
+  license: 'MIT',
   wrapperRepo: 'https://github.com/Start9Labs/hello-world-wrapper',
   upstreamRepo: 'https://github.com/Start9Labs/hello-world',
   supportSite: 'https://docs.start9.com/',
   marketingSite: 'https://start9.com/',
   donationUrl: 'https://donate.start9.com/',
+  docsUrl: 'https://github.com/aldum/monerod-startos/docs/instructions.md',
   description: {
     short: 'Bare bones example of a StartOS service',
     long: 'Monero is a template service that provides examples of basic StartOS features.',
