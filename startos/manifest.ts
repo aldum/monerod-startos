@@ -1,4 +1,10 @@
 import { setupManifest } from '@start9labs/start-sdk'
+import { SDKImageInputSpec } from '@start9labs/start-sdk/base/lib/types/ManifestTypes'
+
+const BUILD = process.env.BUILD || ''
+
+const architectures =
+  BUILD === 'x86_64' || BUILD === 'aarch64' ? [BUILD] : ['x86_64', 'aarch64']
 
 export const manifest = setupManifest({
   id: 'monero',
@@ -11,24 +17,23 @@ export const manifest = setupManifest({
   donationUrl: 'https://donate.start9.com/',
   docsUrl: 'https://github.com/aldum/monerod-startos/docs/instructions.md',
   description: {
-    short: 'Bare bones example of a StartOS service',
-    long: 'Monero is a template service that provides examples of basic StartOS features.',
+    short: 'Monero node',
+    long: 'Monero node.',
   },
-  assets: [],
   volumes: ['main'],
   images: {
     'monero': {
+      arch: architectures,
       source: {
-        // dockerTag: 'ghcr.io/sethforprivacy/simple-monerod:v0.18.4.0',
         dockerBuild: {
-          dockerfile: 'Dockerfile.monerod',
+          dockerfile: 'Dockerfile',
         }
       },
-    },
+    } as SDKImageInputSpec,
   },
-  hardwareRequirements: {},
+  hardwareRequirements: { arch: architectures },
   alerts: {
-    install: 'Optional alert to display before installing the service',
+    install: null,
     update: null,
     uninstall: null,
     restore: null,
