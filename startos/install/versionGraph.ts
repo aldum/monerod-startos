@@ -12,6 +12,7 @@ export const versionGraph = VersionGraph.of({
 
       }),
       storeJson.write(effects, {
+        network: 'mainnet',
       }),
     ])
   },
