@@ -1,8 +1,9 @@
 import { sdk } from './sdk'
-import { p2pPort, rpcPort, rrpcPort } from './utils'
+import { getP2pPort, getRpcPort, rrpcPort } from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const p2pMulti = sdk.MultiHost.of(effects, 'p2p')
+  const p2pPort = await getP2pPort()
   const p2pMultiOrigin = await p2pMulti.bindPort(p2pPort, {
     protocol: null,
     preferredExternalPort: p2pPort,
@@ -24,6 +25,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const p2pReceipt = await p2pMultiOrigin.export([p2p])
 
   const rpcMulti = sdk.MultiHost.of(effects, 'rpc')
+  const rpcPort = await getRpcPort()
   const rpcMultiOrigin = await rpcMulti.bindPort(rpcPort, {
     protocol: null,
     preferredExternalPort: p2pPort,

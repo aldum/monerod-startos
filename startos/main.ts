@@ -1,11 +1,16 @@
 import { sdk } from './sdk'
-import { checkSyncProgress, datadir, p2pPort, rpcPort, rrpcPort } from './utils'
+import {
+  checkSyncProgress, datadir,
+  getP2pPort, getRpcPort, rrpcPort
+} from './utils'
 import { chown, mkdir } from 'fs/promises'
 import { getSubC } from './subcontainers/monero'
+import { storeJson } from './fileModels/store.json'
 
 export const main = sdk.setupMain(async ({ effects, started }) => {
   console.info('+++++++++++++++++++ Starting Monero! +++++++++++++++++++')
 
+  const store = await storeJson.read().once()
   const monC = await getSubC(effects)
 
   const mainPath = '/media/startos/volumes/main/'
@@ -13,7 +18,11 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   chown(`${mainPath}/bitmonero`, 1000, 1000)
   chown(`${mainPath}/bitmonero/lmdb`, 1000, 1000)
 
+  const p2pPort = await getP2pPort()
+  const rpcPort = await getRpcPort()
   const home = '/home/monero'
+  const testnet = store?.network === 'testnet'
+
   return sdk.Daemons.of(effects, started)
     .addDaemon('primary', {
       subcontainer: monC,
@@ -34,6 +43,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
           "--no-zmq",
           "--enable-dns-blocklist",
           `--ban-list=${home}/ban_list.txt`,
+          testnet ? '--testnet' : '',
         ],
         user: 'monero',
         cwd: home,
