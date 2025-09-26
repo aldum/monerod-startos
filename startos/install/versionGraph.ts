@@ -1,7 +1,7 @@
 import { VersionGraph } from '@start9labs/start-sdk'
 import { current, other } from './versions'
 import { configYaml } from '../fileModels/config.yml'
-import { store } from '../fileModels/store.json'
+import { storeJson } from '../fileModels/store.json'
 
 export const versionGraph = VersionGraph.of({
   current,
@@ -11,7 +11,7 @@ export const versionGraph = VersionGraph.of({
       configYaml.write(effects, {
 
       }),
-      store.write(effects, {
+      storeJson.write(effects, {
       }),
     ])
   },
