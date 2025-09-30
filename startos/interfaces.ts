@@ -1,5 +1,5 @@
 import { sdk } from './sdk'
-import { getP2pPort, getRpcPort, rrpcPort } from './utils'
+import { getP2pPort, getRpcPort, getZmqPort, rrpcPort } from './utils'
 
 export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   const p2pMulti = sdk.MultiHost.of(effects, 'p2p')
@@ -21,14 +21,13 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     path: '',
     query: {},
   })
-
   const p2pReceipt = await p2pMultiOrigin.export([p2p])
 
   const rpcMulti = sdk.MultiHost.of(effects, 'rpc')
   const rpcPort = await getRpcPort()
   const rpcMultiOrigin = await rpcMulti.bindPort(rpcPort, {
     protocol: null,
-    preferredExternalPort: p2pPort,
+    preferredExternalPort: rpcPort,
     secure: { ssl: false },
     addSsl: null
   })
@@ -43,8 +42,28 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
     path: '',
     query: {},
   })
-
   const rpcReceipt = await rpcMultiOrigin.export([rpc])
+
+  const zmqMulti = sdk.MultiHost.of(effects, 'zmq')
+  const zmqPort = await getZmqPort()
+  const zmqMultiOrigin = await zmqMulti.bindPort(zmqPort, {
+    protocol: null,
+    preferredExternalPort: zmqPort,
+    secure: { ssl: false },
+    addSsl: null
+  })
+  const zmq = sdk.createInterface(effects, {
+    name: 'ZMQ',
+    id: 'zmq',
+    description: 'The ZMQ interface',
+    type: 'api',
+    masked: false,
+    schemeOverride: null,
+    username: null,
+    path: '',
+    query: {},
+  })
+  const zmqReceipt = await zmqMultiOrigin.export([zmq])
 
   const rrpcMulti = sdk.MultiHost.of(effects, 'rrpc')
   const rrpcMultiOrigin = await rrpcMulti.bindPort(rrpcPort, {
@@ -67,5 +86,5 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
 
   const rrpcReceipt = await rrpcMultiOrigin.export([rrpc])
 
-  return [p2pReceipt, rpcReceipt, rrpcReceipt]
+  return [p2pReceipt, rpcReceipt, zmqReceipt, rrpcReceipt]
 })

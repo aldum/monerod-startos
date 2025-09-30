@@ -23,7 +23,15 @@ export const getRpcPort = async () => {
     return 18081
   }
 }
-export const zmqPort = 18082
+export const getZmqPort = async () => {
+  const net = await getNet()
+  if (net == 'testnet') {
+    return 28082
+  } else {
+    // mainnet
+    return 18082
+  }
+}
 export const zmqPubPort = 18083
 export const rrpcPort = 18089
 export const walletPort = 28088
