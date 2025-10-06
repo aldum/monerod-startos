@@ -52,7 +52,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
         fn: () =>
           sdk.healthCheck.checkPortListening(effects, p2pPort, {
             successMessage: 'The P2P interface is ready',
-            errorMessage: '',
+            errorMessage: 'P2P unreachable',
           }),
       },
       requires: [],
