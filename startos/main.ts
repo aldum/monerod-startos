@@ -23,27 +23,24 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const home = '/home/monero'
   const testnet = store?.network === 'testnet'
 
+  const moneroArgs = [
+    `--data-dir=${datadir}`,
+    "--prune-blockchain",
+    "--fast-block-sync", "1",
+    "--rpc-restricted-bind-ip=0.0.0.0",
+    `--rpc-restricted-bind-port=${rrpcPort}`,
+    "--zmq-rpc-bind-ip=0.0.0.0",
+    "--no-igd",
+    "--enable-dns-blocklist",
+    `--ban-list=${home}/ban_list.txt`,
+  ]
+  if (testnet) { moneroArgs.push('--testnet') }
+
   return sdk.Daemons.of(effects, started)
     .addDaemon('primary', {
       subcontainer: monC,
       exec: {
-        command: [
-          '/entrypoint.sh',
-          `--data-dir=${datadir}`,
-          "--prune-blockchain",
-          "--fast-block-sync", "1",
-          "--rpc-bind-ip=0.0.0.0",
-          // `--rpc-bind-port=${rpcPort}`,
-          // "--restricted-rpc",
-          "--rpc-restricted-bind-ip=0.0.0.0",
-          // `--rpc-restricted-bind-port=${rrpcPort}`,
-          "--confirm-external-bind",
-          "--zmq-rpc-bind-ip=0.0.0.0",
-          "--no-igd",
-          "--enable-dns-blocklist",
-          `--ban-list=${home}/ban_list.txt`,
-          testnet ? '--testnet' : '',
-        ],
+        command: ['/entrypoint.sh', ...moneroArgs],
         user: 'monero',
         cwd: home,
       },
