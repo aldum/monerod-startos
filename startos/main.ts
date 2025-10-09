@@ -58,8 +58,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
       ready: {
         display: 'Blockchain Sync Progress',
         fn: async () => {
-          const r = await checkSyncProgress(monC)
-          return r
+          return await checkSyncProgress(monC)
         },
         gracePeriod: 10000,
 

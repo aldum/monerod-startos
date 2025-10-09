@@ -38,42 +38,48 @@ export const walletPort = 28088
 
 export const datadir = '/data/bitmonero'
 
-export const checkSyncProgress = async (monc: SubContainer<typeof manifest>): Promise<HealthCheckResult> => {
-  try {
-    const rpcPort = await getRpcPort()
-    const res = await monc.execFail([
-      'curl', '-s', `http://127.0.0.1:${rpcPort}/json_rpc`,
-      '-d', '{ "jsonrpc": "2.0", "id": "0", "method": "sync_info" }',
-      '-H', 'Content-Type: application/json'
-    ])
-    const output = JSON.parse(String(res.stdout)).result
-    const height = Number.parseInt(output.height)
-    const fullHeight = Number.parseInt(output.target_height)
+export const checkSyncProgress =
+  async (monc: SubContainer<typeof manifest>):
+    Promise<HealthCheckResult> => {
+    try {
+      const done: HealthCheckResult = {
+        message: 'Sync done',
+        result: 'success'
+      }
+      const starting: HealthCheckResult = {
+        message: 'Starting...',
+        result: 'starting'
+      }
+      const rpcPort = await getRpcPort()
+      const res = await monc.execFail([
+        'curl', '-s', `http://127.0.0.1:${rpcPort}/json_rpc`,
+        '-d', '{ "jsonrpc": "2.0", "id": "0", "method": "sync_info" }',
+        '-H', 'Content-Type: application/json'
+      ])
+      const output = JSON.parse(String(res.stdout)).result
+      const height = Number.parseInt(output.height)
+      const fullHeight = Number.parseInt(output.target_height)
 
-    if (fullHeight && fullHeight !== 0) {
-      if (height === fullHeight) {
-        return {
-          message: 'Sync done',
-          result: 'success'
+      if (fullHeight && fullHeight !== 0) {
+        if (height === fullHeight) {
+          return done
+        } else {
+          // console.info(`Height: ${height} / ${fullHeight}`)
+          const percentage =
+            (height / fullHeight * 100).toFixed(2)
+          return {
+            message: `Progress: ${percentage}%`,
+            result: 'loading',
+          }
         }
       } else {
-        const percentage =
-          (height / fullHeight * 100).toFixed(2)
-        return {
-          message: `Progress: ${percentage}%`,
-          result: 'loading',
-        }
+        return starting
+      }
+    } catch (e) {
+      return {
+        message: String(e),
+        result: "failure"
       }
     }
-  } catch (e) {
-    return {
-      message: String(e),
-      result: "failure"
-    }
-  }
 
-  return {
-    message: 'Starting...',
-    result: "starting"
   }
-}
