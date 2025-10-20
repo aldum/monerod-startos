@@ -57,20 +57,27 @@ export const checkSyncProgress =
         '-H', 'Content-Type: application/json'
       ])
       const output = JSON.parse(String(res.stdout)).result
+      const status = output.status
       const height = Number.parseInt(output.height)
       const fullHeight = Number.parseInt(output.target_height)
 
-      if (fullHeight && fullHeight !== 0) {
-        if (height === fullHeight) {
-          return done
-        } else {
-          // console.info(`Height: ${height} / ${fullHeight}`)
-          const percentage =
-            (height / fullHeight * 100).toFixed(2)
-          return {
-            message: `Progress: ${percentage}%`,
-            result: 'loading',
+      if (status === 'OK') {
+        if (fullHeight !== 0) {
+          if (height === fullHeight) {
+            return done
+          } else {
+            console.info(`Height: ${height} / ${fullHeight}`)
+            const percentage = (height / fullHeight * 100)
+            const label = percentage < 99 ?
+              percentage.toFixed(2) :
+              percentage.toFixed(6)
+            return {
+              message: `Progress: ${label}%`,
+              result: 'loading',
+            }
           }
+        } else {
+          return done
         }
       } else {
         return starting
