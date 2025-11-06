@@ -74,7 +74,7 @@ export const setInterfaces = sdk.setupInterfaces(async ({ effects }) => {
   })
   const rrpc = sdk.createInterface(effects, {
     name: 'RPC',
-    id: 'rpc',
+    id: 'rrpc',
     description: 'Restricted RPC interface',
     type: 'api',
     masked: false,
