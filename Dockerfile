@@ -1,4 +1,4 @@
-FROM ghcr.io/sethforprivacy/simple-monerod:v0.18.4.2@sha256:4ddb2eef5b367639a106f449c47992709a55953e30ea269788cdd736ca45a98b
+FROM ghcr.io/sethforprivacy/simple-monerod:v0.18.4.3@sha256:7f4fd04d1c35299e57c1719fad23a0d058691a21304649b6986afd3b8ef7a090
 
 # ARG MONERO_USER="monero"
 USER "${MONERO_USER}"
