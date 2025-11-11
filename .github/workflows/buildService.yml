@@ -2,11 +2,11 @@ name: Build Service
 on:
   workflow_dispatch:
   pull_request:
-    paths-ignore: ['*.md']
-    branches: ['main', 'master', 'update/040']
+    paths-ignore: ["*.md"]
+    branches: ["main", "master", "update/040"]
   push:
-    paths-ignore: ['*.md']
-    branches: ['main', 'master', 'update/040']
+    paths-ignore: ["*.md"]
+    branches: ["main", "master", "update/040"]
 
 jobs:
   Build_aarch64:
@@ -25,7 +25,7 @@ jobs:
         id: build
         shell: bash
         run: |
-          start-cli init
+          start-cli init-key
           chmod 600 ~/.startos/developer.key.pem
           RUST_LOG=debug RUST_BACKTRACE=1 make aarch64
 
@@ -63,7 +63,7 @@ jobs:
         id: build
         shell: bash
         run: |
-          start-cli init
+          start-cli init-key
           chmod 600 ~/.startos/developer.key.pem
           RUST_LOG=debug RUST_BACKTRACE=1 make x86
 
@@ -102,7 +102,7 @@ jobs:
         id: build
         shell: bash
         run: |
-          start-cli init
+          start-cli init-key
           chmod 600 ~/.startos/developer.key.pem
           RUST_LOG=debug RUST_BACKTRACE=1 make
 

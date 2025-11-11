@@ -71,7 +71,7 @@ check-deps:
 check-init:
 	@if [ ! -f ~/.startos/developer.key.pem ]; then \
 		echo "Initializing StartOS developer environment..."; \
-		start-cli init; \
+		start-cli init-key; \
 	fi
 
 check-ts: node_modules
