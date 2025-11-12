@@ -1,13 +1,13 @@
 PACKAGE_ID := $(shell awk -F"'" '/id:/ {print $$2}' startos/manifest.ts)
 INGREDIENTS := $(shell start-cli s9pk list-ingredients 2>/dev/null)
 
-CMD_ARCH_GOAL := $(filter aarch64 x86_64 arm x86 x64, $(MAKECMDGOALS))
+CMD_ARCH_GOAL := $(filter aarch64 x86_64 arm x86, $(MAKECMDGOALS))
 ifeq ($(CMD_ARCH_GOAL),)
   BUILD := universal
   S9PK := $(PACKAGE_ID).s9pk
 else
   RAW_ARCH := $(firstword $(CMD_ARCH_GOAL))
-  ACTUAL_ARCH := $(subst x86,x86_64,$(subst arm,aarch64,$(RAW_ARCH)))
+  ACTUAL_ARCH := $(patsubst x86,x86_64,$(patsubst arm,aarch64,$(RAW_ARCH)))
   BUILD := $(ACTUAL_ARCH)
   S9PK := $(PACKAGE_ID)_$(BUILD).s9pk
 endif
@@ -20,7 +20,7 @@ define SUMMARY
 	size=$$(du -h $(1) | awk '{print $$1}'); \
 	title=$$(printf '%s' "$$manifest" | jq -r .title); \
 	version=$$(printf '%s' "$$manifest" | jq -r .version); \
-	arches=$$(printf '%s' "$$manifest" | jq -r '.hardwareRequirements?.arch // ["x86_64", "aarch64"] | join(", ")'); \
+	arches=$$(printf '%s' "$$manifest" | jq -r '.hardwareRequirements.arch | join(", ")'); \
 	sdkv=$$(printf '%s' "$$manifest" | jq -r .sdkVersion); \
 	gitHash=$$(printf '%s' "$$manifest" | jq -r .gitHash | sed -E 's/(.*-modified)$$/\x1b[0;31m\1\x1b[0m/'); \
 	printf "\n"; \
