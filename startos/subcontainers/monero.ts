@@ -11,10 +11,13 @@ export const mounts = sdk.Mounts.of()
     readonly: false,
   })
 
-export const getSubC =
-  async (effects: Effects) => sdk.SubContainer.of(
+export const getSubC = async (
+  effects: Effects,
+  name: string = 'monero-sub'
+) =>
+  sdk.SubContainer.of(
     effects,
     { imageId: 'monero' },
     mounts,
-    'monero-sub',
+    name,
   )
