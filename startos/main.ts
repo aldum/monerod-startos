@@ -13,10 +13,23 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   const store = await storeJson.read().once()
   const monC = await getSubC(effects)
 
-  const mainPath = '/media/startos/volumes/main/'
-  mkdir(`${mainPath}/bitmonero/lmdb`, { recursive: true })
-  chown(`${mainPath}/bitmonero`, 1000, 1000)
-  chown(`${mainPath}/bitmonero/lmdb`, 1000, 1000)
+  const mainPath = '/media/startos/volumes/main'
+  const datadirLXC = `${mainPath}/bitmonero`
+  const lmdbdirLXC = `${datadirLXC}/lmdb`
+  mkdir(lmdbdirLXC, { recursive: true },)
+  chown(datadirLXC, 1000, 1000)
+  chown(lmdbdirLXC, 1000, 1000)
+
+
+  const { exitCode, stdout, stderr } = await monC.exec(
+    ['chattr', '-R', '+C', `${datadir}/lmdb`], {
+    user: 'root'
+  })
+  if (exitCode !== 0) {
+    console.log("Error running chattr:")
+    console.log(JSON.stringify(stdout, null, 2))
+    console.log(JSON.stringify(stderr, null, 2))
+  }
 
   const p2pPort = await getP2pPort()
   const rpcPort = await getRpcPort()
