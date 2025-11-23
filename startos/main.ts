@@ -40,6 +40,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     `--data-dir=${datadir}`,
     "--prune-blockchain",
     "--fast-block-sync", "1",
+    `--rpc-bind-port=${rpcPort}`,
     "--rpc-restricted-bind-ip=0.0.0.0",
     `--rpc-restricted-bind-port=${rrpcPort}`,
     "--zmq-rpc-bind-ip=0.0.0.0",
