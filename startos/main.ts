@@ -30,6 +30,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     console.log(JSON.stringify(stdout, null, 2))
     console.log(JSON.stringify(stderr, null, 2))
   }
+  await monC.exec(['touch', `${datadir}/ban_list.txt`])
 
   const p2pPort = await getP2pPort()
   const rpcPort = await getRpcPort()
@@ -46,7 +47,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
     "--zmq-rpc-bind-ip=0.0.0.0",
     "--no-igd",
     "--enable-dns-blocklist",
-    `--ban-list=${home}/ban_list.txt`,
+    `--ban-list=${datadir}/ban_list.txt`,
   ]
   if (testnet) { moneroArgs.push('--testnet') }
 
