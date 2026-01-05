@@ -7,7 +7,7 @@ import { chown, mkdir } from 'fs/promises'
 import { getSubC } from './subcontainers/monero'
 import { storeJson } from './fileModels/store.json'
 
-export const main = sdk.setupMain(async ({ effects, started }) => {
+export const main = sdk.setupMain(async ({ effects }) => {
   console.info('+++++++++++++++++++ Starting Monero! +++++++++++++++++++')
 
   const store = await storeJson.read().once()
@@ -51,7 +51,7 @@ export const main = sdk.setupMain(async ({ effects, started }) => {
   ]
   if (testnet) { moneroArgs.push('--testnet') }
 
-  return sdk.Daemons.of(effects, started)
+  return sdk.Daemons.of(effects)
     .addDaemon('primary', {
       subcontainer: monC,
       exec: {
